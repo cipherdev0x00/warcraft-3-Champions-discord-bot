@@ -25,6 +25,7 @@ const raceOfPicture = {
   race8: "UNDEAD",
   race0: "RANDOM",
   race16: "TOTAL",
+  race64: "STARTER",
 };
 
 async function OneVOneEmbed(name, races, indexLeague) {
@@ -154,6 +155,7 @@ async function RestGamemodesEmbed(name, gameModes, indexLeague) {
 
     let image;
 
+    console.log(personalSettings.profilePicture.isClassic, personalSettings.profilePicture.race, personalSettings.profilePicture.pictureId);
     if (personalSettings.profilePicture.isClassic) {
       image = `https://w3champions.wc3.tools/prod/integration/icons/raceAvatars/classic/${
         raceOfPicture["race" + personalSettings.profilePicture.race]
@@ -172,7 +174,7 @@ async function RestGamemodesEmbed(name, gameModes, indexLeague) {
         raceOfPicture["race" + personalSettings.profilePicture.race]
       }_${personalSettings.profilePicture.pictureId}.jpg`;
     }
-
+    
     embed.setThumbnail(image);
 
     gameModes.map((gameMode) => {

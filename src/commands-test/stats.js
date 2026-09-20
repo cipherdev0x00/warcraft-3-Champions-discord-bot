@@ -74,6 +74,7 @@ module.exports = {
 
       const { stats, gameModeWithoutDuplicate: gameModes } = await findStatsAndGamemode(player, gameMode);
       let embed = null;
+      
       if (gameMode === ONE_V_ONE_GAMEMODE) {
         embed = await OneVOneEmbed(player, stats, indexLeague);
       } else if (
@@ -83,7 +84,11 @@ module.exports = {
       } else {
         embed = await RestGamemodesEmbed(player, stats, indexLeague);
       }
-      const seasons = await participatedInSeason(player);
+      let seasons = await participatedInSeason(player);
+
+      if (seasons.length > 25) {
+        seasons = seasons.slice(0, 25);
+      }
       
       const selectorMode = new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()

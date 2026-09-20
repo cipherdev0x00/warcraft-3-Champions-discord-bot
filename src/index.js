@@ -1,5 +1,32 @@
 const express = require("express");
 const { findW3CPlayer } = require("./services");
+const {
+  ANY_HERO,
+  NO_HERO,
+  resolveHero,
+  searchHeroes,
+} = require("./libs/heroes");
+const {
+  PICK_PREVIOUS_FIRST,
+  isEmptySlot,
+} = require("./libs/lineup");
+
+const ALLY_OPTIONS = ["hero1", "hero2", "hero3"];
+const ENEMY_OPTIONS = ["enemy1", "enemy2", "enemy3"];
+const LINEUPS = [ALLY_OPTIONS, ENEMY_OPTIONS];
+
+const choiceLabel = (hero) =>
+  hero.race === ANY_HERO.race || hero.race === NO_HERO.race
+    ? hero.name
+    : `${hero.name} (${hero.race})`;
+
+const toChoice = (hero) => ({ name: choiceLabel(hero), value: hero.key });
+
+// Current value of an option, or null when it is empty.
+const readSlot = (interaction, name) => {
+  const value = interaction.options.getString(name);
+  return isEmptySlot(value) ? null : value;
+};
 
 const app = express();
 
@@ -97,6 +124,51 @@ client.on(Events.ClientReady, async () => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
+
+    if (interaction.isAutocomplete() && interaction.commandName === "herostats") {
+    try {
+      const focused = interaction.options.getFocused(true);
+            const lineup = LINEUPS.find((names) => names.includes(focused.name));
+            if (!lineup) return await interaction.respond([]);
+      
+            const position = lineup.indexOf(focused.name);
+            const earlier = lineup
+              .slice(0, position)
+              .map((name) => readSlot(interaction, name));
+      
+            // Slots must be filled in order, so hint at the one that is missing.
+            const missing = earlier.indexOf(null);
+            if (missing !== -1) {
+              return await interaction.respond([
+                { name: `Pick ${lineup[missing]} first`, value: PICK_PREVIOUS_FIRST },
+              ]);
+            }
+      
+            // After a "No hero" slot the only possible value is "No hero" again.
+            if (earlier.some((value) => resolveHero(value) === NO_HERO)) {
+              return await interaction.respond([toChoice(NO_HERO)]);
+            }
+      
+            // A hero cannot be picked twice in the same lineup.
+            const alreadyPicked = lineup
+              .filter((name) => name !== focused.name)
+              .map((name) => readSlot(interaction, name))
+              .map((value) => (value === null ? null : resolveHero(value)))
+              .filter(Boolean)
+              .map((hero) => hero.key);
+      
+            const choices = searchHeroes(focused.value, {
+              exclude: alreadyPicked,
+              allowNone: position > 0,
+            }).map(toChoice);
+      
+            await interaction.respond(choices);
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  }
+
   if (
     (interaction.commandName === "stats" ||
       interaction.commandName === "score") &&

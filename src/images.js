@@ -2,6 +2,7 @@ const { loadImage } = require("canvas");
 const Canvas = require("canvas");
 const hero = {};
 
+hero.forsakenpaladin = __dirname + "/assets/forsakenpaladin.png";
 hero.am = __dirname + "/assets/archmage.0e407b7b.png"
 hero.mk = __dirname + "/assets/mountainking.2d45fe6d.png";
 hero.paladin = __dirname + "/assets/paladin.f595991a.png";
@@ -72,7 +73,7 @@ hero.tinker = __dirname + "/assets/tinker.04662773.png";
 hero.alchemist = __dirname + "/assets/alchemist.f624263a.png";
 hero.BoulderVale = "https://liquipedia.net/commons/images/2/2c/Wc3BoulderValeNew.png";
 hero.Scrimmage = "https://liquipedia.net/commons/images/c/c5/Wc3Scrimmage.png";
-hero.Hammerfall = "https://liquipedia.net/commons/images/thumb/2/21/Hammerfall.png/600px-Hammerfall.png";
+hero.Hammerfall = "https://liquipedia.net/commons/images/2/21/Hammerfall.png";
 hero.Springtime = "https://liquipedia.net/commons/images/c/c1/Wc3SpringTime.png"
 hero['Springtimev1_2'] = "https://liquipedia.net/commons/images/c/c1/Wc3SpringTime.png"
 hero.concealedhill = "https://liquipedia.net/commons/images/8/8f/Concealed_Hill_1.2.png";
@@ -249,7 +250,7 @@ const loadImagesCanvas = async () => {
       try {
         hero[property] = await loadImage(hero[property]);
       } catch (error) {
-        console.log('error!!!!!')
+                console.log(hero[property])
         console.log(error)
       }
     }, 1000)
