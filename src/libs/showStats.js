@@ -1,8 +1,22 @@
 const { getPlayerByName } = require("../services/index");
+const { FOUR_V_FOUR_AT_GAMEMODE } = require("./helper");
 
-const showStats = async (player, server, message) => {
-	const stats = await getPlayerByName(player, server);
-	return { player, stats, message };
+const showStats = async (player, server) => {
+  const races = await getPlayerByName(player, server);
+  return { player, races };
 };
 
-module.exports = showStats;
+async function findStatsAndGamemode(playerName, gameMode, season = process.env.SEASON) {
+  gameMode = Number(gameMode);
+  const gameModeStats = await getPlayerByName(playerName, season);
+  const stats = gameModeStats.filter((d) => d.gameMode === gameMode);
+  const gameModes = gameModeStats.filter((d) => d.gameMode !== gameMode);
+  
+  const gameModeWithoutDuplicate = gameModes.filter(
+    (value, index, self) =>
+      index === self.findIndex((t) => t.gameMode === value.gameMode)
+  );
+  return { stats, gameModeWithoutDuplicate };
+}
+
+module.exports = { showStats, findStatsAndGamemode };

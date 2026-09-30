@@ -1,47 +1,32 @@
 const { prefix } = require("../config.json");
 const channels = require("../channels");
+const { Events } = require("discord.js");
 
-const channelAllowed = message => {
-	for (let i = 0; i < channels.length; i++) {
-		if (message.channel.id === channels[i]) {
-			return true;
-		}
-	}
-	return false;
+const channelAllowed = (channelId) => {
+  for (let i = 0; i < channels.length; i++) {
+    if (channelId === channels[i]) {
+      return true;
+    }
+  }
+  return false;
 };
 
-const notAllowed = message => {
-  if( message.author.id === "307301391976628225" && message.channel.id === "445218410738089986"
-){
-    return true
-  }
-  return false
-}
+const eventsMessage = (client) => {
+  client.on(Events.InteractionCreate, async (interaction) => {
+    try {
+      if (!interaction.isChatInputCommand()) return;
+      if (!channelAllowed(interaction.channel.id)) return;
 
-const eventsMessage = client => {
-	client.on("message", async message => {
-		try {
-			if (!message.content.startsWith(prefix)) return;
-			if (!channelAllowed(message)) return;
-      if (notAllowed(message))      return message.channel.send("Not authorized")
+      const command = client.commands.get(interaction.commandName);
 
-
-			let args = message.content
-				.slice(prefix.length)
-				.trim()
-				.split(/ +/g);
-			let command = args.shift().toLowerCase();
-
-			let commandFound = client.commands.get(command) || client.commands.find(c => c.alias && c.alias.includes(command));
-
-			if (args.length > 0) args.forEach((arg, i) => (args[i] = args[i].toLowerCase()));
-			if (!commandFound) return;
-
-			return commandFound.run(client, message, args);
-		} catch (err) {
-			console.log(err);
-		}
-	});
+      if (!command) {
+        return;
+      }
+      await command.execute(interaction);
+    } catch (err) {
+      console.log(err);
+    }
+  });
 };
 
 module.exports = eventsMessage;
