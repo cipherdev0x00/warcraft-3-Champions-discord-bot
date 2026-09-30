@@ -40,7 +40,7 @@ module.exports = {
         .setName("battletag")
         .setDescription("The player's battletag")
         .setAutocomplete(true)
-        .setRequired(true)
+        .setRequired(true),
     )
     .addStringOption((option) =>
       option
@@ -59,8 +59,8 @@ module.exports = {
           { name: ONE_V_ONE_LEGION_TD_NAME, value: ONE_V_ONE_LEGION_TD },
           { name: FOUR_V_FOUR_LEGION_TD_NAME, value: FOUR_V_FOUR_LEGION_TD },
           { name: MINIDOTA_GAMEMODE_NAME, value: MINIDOTA_GAMEMODE },
-          { name: MINIDOTA_AT_GAMEMODE_NAME, value: MINIDOTA_AT_GAMEMODE }
-        )
+          { name: MINIDOTA_AT_GAMEMODE_NAME, value: MINIDOTA_AT_GAMEMODE },
+        ),
     ),
 
   async execute(interaction, battleTag, gameModeSelected, seasonSelected) {
@@ -72,9 +72,10 @@ module.exports = {
         ONE_V_ONE_GAMEMODE;
       let indexLeague = 2;
 
-      const { stats, gameModeWithoutDuplicate: gameModes } = await findStatsAndGamemode(player, gameMode, seasonSelected);
+      const { stats, gameModeWithoutDuplicate: gameModes } =
+        await findStatsAndGamemode(player, gameMode, seasonSelected);
       let embed = null;
-      
+
       if (gameMode === ONE_V_ONE_GAMEMODE) {
         embed = await OneVOneEmbed(player, stats, indexLeague);
       } else if (
@@ -98,8 +99,8 @@ module.exports = {
             gameModes.map((mode) => ({
               label: GAMEMODES[mode.gameMode.toString()],
               value: `${mode.gameMode.toString()}_${crypto.randomUUID()}`,
-            }))
-          )
+            })),
+          ),
       );
 
       // const selectorSeason = new ActionRowBuilder().addComponents(
@@ -114,16 +115,15 @@ module.exports = {
       //     )
       // );
 
-      if(gameModes.length === 0) {
+      if (gameModes.length === 0) {
         return interaction.reply({
-        embeds: [embed],
-      });
-      } else {
-        return interaction.reply({
+          embeds: [embed],
+        });
+      }
+      return interaction.reply({
         embeds: [embed],
         components: [selectorMode],
       });
-      }
     } catch (err) {
       console.log(err);
     }
