@@ -44,12 +44,12 @@ async function findW3CPlayer(player, server = 20) {
   });
 }
 
-const getPlayerByName = async (player) => {
+const getPlayerByName = async (player, season) => {
   let response = await fetch(
     `https://statistic-service.w3champions.com/api/players/${player.replace(
       "#",
       "%23",
-    )}/game-mode-stats?gateWay=20&season=${process.env.SEASON}`,
+    )}/game-mode-stats?gateWay=20&season=${season}`,
   );
 
   let data = await response.json();

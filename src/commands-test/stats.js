@@ -63,7 +63,7 @@ module.exports = {
         )
     ),
 
-  async execute(interaction, battleTag, gameModeSelected) {
+  async execute(interaction, battleTag, gameModeSelected, seasonSelected) {
     try {
       let player = interaction?.options?.getString("battletag") || battleTag;
       const gameMode =
@@ -72,7 +72,7 @@ module.exports = {
         ONE_V_ONE_GAMEMODE;
       let indexLeague = 2;
 
-      const { stats, gameModeWithoutDuplicate: gameModes } = await findStatsAndGamemode(player, gameMode);
+      const { stats, gameModeWithoutDuplicate: gameModes } = await findStatsAndGamemode(player, gameMode, seasonSelected);
       let embed = null;
       
       if (gameMode === ONE_V_ONE_GAMEMODE) {
@@ -89,7 +89,7 @@ module.exports = {
       if (seasons.length > 25) {
         seasons = seasons.slice(0, 25);
       }
-      
+
       const selectorMode = new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
           .setCustomId(`stats_mode_${player}`)
@@ -102,22 +102,28 @@ module.exports = {
           )
       );
 
-      const selectorSesson = new ActionRowBuilder().addComponents(
-        new StringSelectMenuBuilder()
-          .setCustomId(`season_${player}`)
-          .setPlaceholder(`Season ${process.env.SEASON}`)
-          .addOptions(
-            seasons.map((season) => ({
-              label: season.id.toString(),
-              value: `season_${season.id}_${crypto.randomUUID()}`,
-            }))
-          )
-      );
+      // const selectorSeason = new ActionRowBuilder().addComponents(
+      //   new StringSelectMenuBuilder()
+      //     .setCustomId(`season_${player}_${gameModeSelected}`)
+      //     .setPlaceholder(`Season ${process.env.SEASON}`)
+      //     .addOptions(
+      //       seasons.map((season) => ({
+      //         label: season.id.toString(),
+      //         value: `season_${season.id}_${crypto.randomUUID()}`,
+      //       }))
+      //     )
+      // );
 
-      return interaction.reply({
+      if(gameModes.length === 0) {
+        return interaction.reply({
         embeds: [embed],
-        components: [selectorMode, selectorSesson],
       });
+      } else {
+        return interaction.reply({
+        embeds: [embed],
+        components: [selectorMode],
+      });
+      }
     } catch (err) {
       console.log(err);
     }

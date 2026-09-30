@@ -155,7 +155,6 @@ async function RestGamemodesEmbed(name, gameModes, indexLeague) {
 
     let image;
 
-    console.log(personalSettings.profilePicture.isClassic, personalSettings.profilePicture.race, personalSettings.profilePicture.pictureId);
     if (personalSettings.profilePicture.isClassic) {
       image = `https://w3champions.wc3.tools/prod/integration/icons/raceAvatars/classic/${
         raceOfPicture["race" + personalSettings.profilePicture.race]

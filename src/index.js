@@ -202,10 +202,20 @@ client.on(Events.InteractionCreate, async (interaction) => {
       const [unkwon, unkwn2, player] = interaction.customId.split("_");
 
       const [gameModeSelected] = interaction.values[0].split("_");
-
+      
       const statsCommand = client.commands.get("stats");
 
       statsCommand.execute(interaction, player, gameModeSelected);
+      return;
+    }
+
+    if(interaction.customId.startsWith("season_")) {
+      const [unkwon, player, gameModeSelected] = interaction.customId.split("_");
+      const [_, seasonSelected] = interaction.values[0].split("_");
+
+      const statsCommand = client.commands.get("stats");
+
+      statsCommand.execute(interaction, player, gameModeSelected, seasonSelected);
       return;
     }
 

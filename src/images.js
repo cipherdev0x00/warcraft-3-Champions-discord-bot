@@ -41,6 +41,7 @@ hero.background20 = __dirname + "/assets/background2.jpg";
 
 
 hero.undefined = __dirname + "/assets/none.e9b22af6.png";
+hero.none = __dirname + "/assets/none.e9b22af6.png";
 hero.race1 = __dirname + "/assets/HUMAN.86b68278.png";
 hero.race2 = __dirname + "/assets/ORC.fe8d30a3.png";
 hero.race8 = __dirname + "/assets/UNDEAD.eedab6ad.png";

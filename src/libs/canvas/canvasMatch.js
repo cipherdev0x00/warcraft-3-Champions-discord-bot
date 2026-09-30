@@ -1,55 +1,59 @@
 const herosImages = require("../../images");
 const Canvas = require("canvas");
 const { AttachmentBuilder } = require("discord.js");
-
+ 
+const WINNER_COLOR = "#8FE388";
+const LOSER_COLOR = "#FF8A8A";
+const NEUTRAL_COLOR = "#fff";
+ 
+const hasTeamWon = (team) =>
+  Boolean(team.won) || team.players.some((player) => player.won);
+ 
+const getPlayerColor = (match, battleTag) => {
+  const playerTeam = match.teams.find((team) =>
+    team.players.some((player) => player.battleTag === battleTag)
+  );
+  const hasWinner = match.teams.some(hasTeamWon);
+ 
+  if (!playerTeam || !hasWinner) return NEUTRAL_COLOR;
+  return hasTeamWon(playerTeam) ? WINNER_COLOR : LOSER_COLOR;
+};
+ 
+const drawPlayerName = (ctx, battleTag, centerX, y, color) => {
+  const name = battleTag.replace(/#\w+/gi, "");
+  ctx.fillStyle = color;
+  ctx.fillText(name, centerX - ctx.measureText(name).width / 2, y);
+};
+ 
 const canvasMatch = (stats) => {
   Canvas.registerFont("MesloLGS NF Regular.ttf", { family: "Meslo" });
   const canvas = Canvas.createCanvas(900, 700);
   const ctx = canvas.getContext("2d");
-
+ 
   const unitsKilled = "Units Killed";
   const unitsProduced = "Units Produced";
   const goldMined = "Gold Mined";
   const lumberHarvested = "Lumber Harvested";
   const upkeepLost = "Upkeep Lost";
   const largestArmy = "Largest Army";
-
+ 
   ctx.drawImage(herosImages["background"], 0, 0, canvas.width, canvas.height);
-
+ 
+  const leftPlayer = stats.playerScores[0].battleTag;
+  const rightPlayer = stats.playerScores[1].battleTag;
+ 
   ctx.font = "45px Meslo";
-  ctx.fillStyle = "#85BB65";
-  ctx.fillText(
-    stats.match.teams[0].players[0].battleTag.replace(/#\w+/gi, ""),
-    canvas.width / 2 -
-      ctx.measureText(stats.playerScores[0].battleTag.replace(/#\w+/gi, ""))
-        .width /
-        2,
-    50
+  drawPlayerName(ctx, leftPlayer, 180, 100, getPlayerColor(stats.match, leftPlayer));
+  drawPlayerName(
+    ctx,
+    rightPlayer,
+    canvas.width - 180,
+    100,
+    getPlayerColor(stats.match, rightPlayer)
   );
-
-  ctx.font = "45px Meslo";
-  ctx.fillStyle = "#fff";
-  ctx.fillText(
-    stats.playerScores[0].battleTag.replace(/#\w+/gi, ""),
-    180 -
-      ctx.measureText(stats.playerScores[0].battleTag.replace(/#\w+/gi, ""))
-        .width /
-        2,
-    100
-  );
-
-  ctx.font = "45px Meslo";
-  ctx.fillStyle = "#fff";
-  ctx.fillText(
-    stats.playerScores[1].battleTag.replace(/#\w+/gi, ""),
-    canvas.width -
-      180 -
-      ctx.measureText(stats.playerScores[1].battleTag.replace(/#\w+/gi, ""))
-        .width /
-        2,
-    100
-  );
-
+ 
+  ctx.fillStyle = NEUTRAL_COLOR;
+ 
   //hero1 team1
   ctx.drawImage(
     herosImages[
@@ -69,7 +73,7 @@ const canvasMatch = (stats) => {
     100 - ctx.measureText("1").width / 2,
     330
   );
-
+ 
   //hero2 team1
   ctx.drawImage(
     herosImages[
@@ -89,7 +93,7 @@ const canvasMatch = (stats) => {
     190 - ctx.measureText("1").width / 2,
     330
   );
-
+ 
   //hero3 team1
   ctx.drawImage(
     herosImages[
@@ -109,7 +113,7 @@ const canvasMatch = (stats) => {
     280 - ctx.measureText("1").width / 2,
     330
   );
-
+ 
   //hero1 team2
   ctx.drawImage(
     herosImages[
@@ -129,7 +133,7 @@ const canvasMatch = (stats) => {
     canvas.width - 280 - ctx.measureText("1").width / 2,
     330
   );
-
+ 
   //hero2 team2
   ctx.drawImage(
     herosImages[
@@ -149,7 +153,7 @@ const canvasMatch = (stats) => {
     canvas.width - 190 - ctx.measureText("1").width / 2,
     330
   );
-
+ 
   //hero3 team2
   ctx.drawImage(
     herosImages[
@@ -169,7 +173,7 @@ const canvasMatch = (stats) => {
     canvas.width - 100 - ctx.measureText("1").width / 2,
     330
   );
-
+ 
   ctx.drawImage(
     herosImages[stats.match.mapName.replaceAll(" ", "")],
     canvas.width / 2 - 180 / 2,
@@ -177,7 +181,7 @@ const canvasMatch = (stats) => {
     180,
     180
   );
-
+ 
   ctx.font = "30px Arial";
   ctx.fillStyle = "#fff";
   ctx.fillText(
@@ -190,19 +194,19 @@ const canvasMatch = (stats) => {
     canvas.width - 260 - ctx.measureText(unitsKilled).width / 2,
     390
   );
-
+ 
   ctx.fillText(
     unitsProduced + ": " + stats.playerScores[0].unitScore.unitsProduced,
     canvas.width / 6 - ctx.measureText(unitsKilled).width / 2,
     430
   );
-
+ 
   ctx.fillText(
     stats.playerScores[1].unitScore.unitsProduced + " :" + unitsProduced,
     canvas.width - 260 - ctx.measureText(unitsKilled).width / 2,
     430
   );
-
+ 
   ctx.fillText(
     goldMined + ": " + stats.playerScores[0].resourceScore.goldCollected,
     canvas.width / 6 - ctx.measureText(unitsKilled).width / 2,
@@ -213,7 +217,7 @@ const canvasMatch = (stats) => {
     canvas.width - 260 - ctx.measureText(unitsKilled).width / 2,
     470
   );
-
+ 
   ctx.fillText(
     lumberHarvested +
       ": " +
@@ -228,7 +232,7 @@ const canvasMatch = (stats) => {
     canvas.width - 260 - ctx.measureText(unitsKilled).width / 2,
     510
   );
-
+ 
   ctx.fillText(
     upkeepLost + ": " + stats.playerScores[0].resourceScore.goldUpkeepLost,
     canvas.width / 6 - ctx.measureText(unitsKilled).width / 2,
@@ -239,7 +243,7 @@ const canvasMatch = (stats) => {
     canvas.width - 260 - ctx.measureText(unitsKilled).width / 2,
     560
   );
-
+ 
   ctx.fillText(
     largestArmy + ": " + stats.playerScores[0].unitScore.largestArmy,
     canvas.width / 6 - ctx.measureText(unitsKilled).width / 2,
@@ -250,9 +254,9 @@ const canvasMatch = (stats) => {
     canvas.width - 260 - ctx.measureText(unitsKilled).width / 2,
     600
   );
-
+ 
   const attachment = new AttachmentBuilder(canvas.toBuffer(), "image.png");
   return attachment;
 };
-
+ 
 module.exports = canvasMatch;

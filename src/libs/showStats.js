@@ -6,9 +6,9 @@ const showStats = async (player, server) => {
   return { player, races };
 };
 
-async function findStatsAndGamemode(playerName, gameMode) {
+async function findStatsAndGamemode(playerName, gameMode, season = process.env.SEASON) {
   gameMode = Number(gameMode);
-  const gameModeStats = await getPlayerByName(playerName);
+  const gameModeStats = await getPlayerByName(playerName, season);
   const stats = gameModeStats.filter((d) => d.gameMode === gameMode);
   const gameModes = gameModeStats.filter((d) => d.gameMode !== gameMode);
   
