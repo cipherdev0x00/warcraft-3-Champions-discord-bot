@@ -61,7 +61,6 @@ module.exports = {
           { name: ONE_V_ONE_LEGION_TD_NAME, value: ONE_V_ONE_LEGION_TD },
           { name: FOUR_V_FOUR_LEGION_TD_NAME, value: FOUR_V_FOUR_LEGION_TD },
           { name: MINIDOTA_GAMEMODE_NAME, value: MINIDOTA_GAMEMODE },
-          { name: MINIDOTA_AT_GAMEMODE_NAME, value: MINIDOTA_AT_GAMEMODE },
           { name: DIRECT_STRIKE_GAMEMODE_NAME, value: DIRECT_STRIKE_GAMEMODE },
         ),
     ),
