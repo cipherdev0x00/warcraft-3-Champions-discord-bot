@@ -29,6 +29,8 @@ const {
   MINIDOTA_AT_GAMEMODE,
   FOUR_V_FOUR_AT_GAMEMODE,
   FOUR_V_FOUR_AT_GAMEMODE_NAME,
+  DIRECT_STRIKE_GAMEMODE_NAME,
+  DIRECT_STRIKE_GAMEMODE,
 } = require("../libs/helper");
 
 module.exports = {
@@ -60,6 +62,7 @@ module.exports = {
           { name: FOUR_V_FOUR_LEGION_TD_NAME, value: FOUR_V_FOUR_LEGION_TD },
           { name: MINIDOTA_GAMEMODE_NAME, value: MINIDOTA_GAMEMODE },
           { name: MINIDOTA_AT_GAMEMODE_NAME, value: MINIDOTA_AT_GAMEMODE },
+          { name: DIRECT_STRIKE_GAMEMODE_NAME, value: DIRECT_STRIKE_GAMEMODE },
         ),
     ),
 
@@ -75,6 +78,13 @@ module.exports = {
       const { stats, gameModeWithoutDuplicate: gameModes } =
         await findStatsAndGamemode(player, gameMode, seasonSelected);
       let embed = null;
+
+      if (stats.length === 0) {
+        return interaction.reply({
+          content: `No stats found for ${player} in ${GAMEMODES[gameMode.toString()]} mode.`,
+          ephemeral: true,
+        });
+      }
 
       if (gameMode === ONE_V_ONE_GAMEMODE) {
         embed = await OneVOneEmbed(player, stats, indexLeague);
