@@ -59,14 +59,6 @@ const { EUROPE_SERVER } = require("./libs/helper");
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
-  partials: [
-    Partials.Channel,
-    Partials.User,
-    Partials.Message,
-    Partials.GuildMember,
   ],
 });
 
@@ -112,7 +104,7 @@ async function deployCommands() {
 
   console.log(`Started refreshing application slash commands globally.`);
   const data = await rest.put(
-    Routes.applicationCommands("751448461877968960"),
+    Routes.applicationCommands("871457005561344000"),
     { body: commands }
   );
 }
