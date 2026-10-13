@@ -104,7 +104,7 @@ async function deployCommands() {
 
   console.log(`Started refreshing application slash commands globally.`);
   const data = await rest.put(
-    Routes.applicationCommands("871457005561344000"),
+    Routes.applicationCommands("751448461877968960"),
     { body: commands }
   );
 }
